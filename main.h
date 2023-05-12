@@ -23,5 +23,7 @@ char ***words, size_t line_size, char *delim);
 int _strcmp(const char *s1, const char *s2);
 char *_strdup(char *str);
 int _strlen(char *s);
+char *_strtok(char *str, const char *delim);
+
 
 #endif
