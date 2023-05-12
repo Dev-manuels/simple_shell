@@ -1,5 +1,12 @@
 #include "main.h"
 
+/**
+ * _getline - Custom getline function
+ * @buffer: buffer to store the input
+ * @bufsize: Stores the size of the buffer
+ * @stream: input stream
+ * Return: count of chars inputed
+*/
 size_t _getline(char **buffer, size_t *bufsize, FILE *stream)
 {
 	size_t count;
