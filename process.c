@@ -154,15 +154,16 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = get_path(strtok(line, delim));
+			token = get_path(_strtok(line, delim));
 
 			i = 0;
 			while (token != NULL)
 			{
+				printf("\"%s\"\n", token);
 				(*words)[i] = _strdup(token);
 				if (i < 1)
 					free(token);
-				token = strtok(NULL, delim);
+				token = _strtok(NULL, delim);
 				i++;
 			}
 			(*words)[i] = NULL;
