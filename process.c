@@ -95,28 +95,29 @@ char *get_path(char *cmd)
 */
 int prompt(void)
 {
-	char *line = NULL, *line_copy = NULL;
-	size_t line_size = 0;
+	char *line = NULL;
+	size_t line_size;
 	ssize_t status_var;
 	char *delim = " \n";
 	char **words = NULL;
-	int wordCount = 0, rtVal = -1;
+	int wordCount = 0, rtVal = -1, i = 0;
 
 	output("($) ");
 	status_var = getline(&line, &line_size, stdin);
 
-	line_copy = malloc(line_size);
+	while(line[i] != '\n')
+		i++;
+
 	/* Test that input was successful and exit if not */
-	if (status_var > 0 && line_copy != NULL)
+	if (status_var > 0)
 	{
 		/* invoke the word separator function and get number of words read */
-		wordCount = seperate_word(line, line_copy, &words, line_size, delim);
+		wordCount = seperate_word(line, &words, i, delim);
 		rtVal = 0;
 	}
 	exe_cmd(words);
 	freeWords(&words, wordCount);
 	free(line);
-	free(line_copy);
 	return (rtVal);
 }
 
@@ -130,16 +131,17 @@ int prompt(void)
  * @delim: Delimiter to be used for tokenization
  * Return: On success number of words tokenized, -1 on failure
 */
-int seperate_word(char *line, char *line_copy,
-char ***words, size_t line_size, char *delim)
+int seperate_word(char *line,
+char ***words, int line_size, char *delim)
 {
-	size_t i;
+	int i;
 	int wordCount = 0;
 	char *token = NULL;
 
 
 	if (line != NULL && _strcmp(line, "") != 0 && _strcmp(line, " ") != 0)
 	{
+		printf("%d\n", line_size);
 		wordCount = 1;
 		for (i = 0; i < line_size; i++)
 		{
@@ -147,13 +149,12 @@ char ***words, size_t line_size, char *delim)
 			{
 				wordCount++;
 			}
-			line_copy[i] = line[i];
 		}
 
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = get_path(strtok(line_copy, delim));
+			token = get_path(strtok(line, delim));
 
 			i = 0;
 			while (token != NULL)
@@ -162,7 +163,6 @@ char ***words, size_t line_size, char *delim)
 				if (i < 1)
 					free(token);
 				token = strtok(NULL, delim);
-				printf("%s\n", (*words)[i]);
 				i++;
 			}
 			(*words)[i] = NULL;

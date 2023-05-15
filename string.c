@@ -9,27 +9,26 @@
 */
 char *_strdup(char *str)
 {
-	char *rtS;
+	char *s;
 
 	if (str == NULL)
 	{
-		rtS = NULL;
+		s = NULL;
 	} else
 	{
 		int size = _strlen(str);
-		char *s = malloc(size + 1);
+		s = malloc(sizeof(char) * size + 1);
 		int i;
 
 		if (s != NULL)
 		{
-			for (i = 0; i < size; i++)
+			for (i = 0; i <= size; i++)
 			{
 				s[i] = str[i];
 			}
 		}
-		rtS = s;
 	}
-	return (rtS);
+	return (s);
 }
 
 /**
@@ -66,7 +65,7 @@ int _strlen(char *s)
 
 	if (s != NULL)
 	{
-		while (s[len])
+		while (s[len] != '\0')
 			len++;
 	}
 
