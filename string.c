@@ -17,9 +17,9 @@ char *_strdup(char *str)
 	} else
 	{
 		int size = _strlen(str);
-		s = malloc(sizeof(char) * size + 1);
 		int i;
 
+		s = malloc(sizeof(char) * size + 1);
 		if (s != NULL)
 		{
 			for (i = 0; i <= size; i++)
@@ -70,6 +70,43 @@ int _strlen(char *s)
 	}
 
 	return (len);
+}
+
+/**
+ * _strtok - Custom strtok function that
+ * tokenizes a string
+ * @str: String to be tokenized
+ * @delim: Delimiter character
+ * Return: Pointer token
+*/
+char *_strtok(char *str, const char *delim)
+{
+	int index;
+	static char *new_str;
+
+	if (new_str == NULL && str == NULL)
+		return (NULL);
+
+	if (str == NULL)
+		str = new_str;
+
+	for (index = 0; str[index] != '\0'; index++)
+	{
+		if (str[index] == *delim)
+		{
+			while (str[index + 1] == *delim)
+				index++;
+
+			str[index] = '\0';
+			new_str = &str[index + 1];
+			break;
+		}
+	}
+
+	if (str[index + 1] == '\0')
+		new_str = NULL;
+
+	return (str);
 }
 
 /**
