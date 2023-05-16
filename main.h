@@ -15,7 +15,7 @@
 
 int exe_cmd(char **argv);
 int freeWords(char ***words, int wordCount);
-char *get_path(char *cmd);
+char *get_path(char *cmd, int *rt);
 int output(char *s);
 int prompt(void);
 int seperate_word(char *line,

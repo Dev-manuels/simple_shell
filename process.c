@@ -52,17 +52,21 @@ int freeWords(char ***words, int wordCount)
  * executeable program in the bin diretory by
  * concartinating cmd to /bin/
  * @cmd: the command to be executed
+ * @rt: value used to detect memory alloc
  * Return: pointer to the path on success, NULL
  * on failure
 */
-char *get_path(char *cmd)
+char *get_path(char *cmd, int *rt)
 {
 	char *path = NULL;
 	char *prefix = "/bin/";
 	int i, j = 0;
 
 	if (access(cmd, X_OK | F_OK) == 0)
+	{
+		*rt = 0;
 		return (cmd);
+	}
 	if (cmd != NULL)
 	{
 		int size = _strlen(cmd) + _strlen(prefix) + 1;
@@ -86,6 +90,7 @@ char *get_path(char *cmd)
 			return (path);
 		}
 	}
+	*rt = 1;
 	return (path);
 }
 
@@ -105,8 +110,10 @@ int prompt(void)
 	output("($) ");
 	status_var = getline(&line, &line_size, stdin);
 
-	while(line[i] != '\n')
+	while (line[i] != '\n')
 		i++;
+
+	line[i] = '\0';
 
 	/* Test that input was successful and exit if not */
 	if (status_var > 0)
@@ -115,8 +122,14 @@ int prompt(void)
 		wordCount = seperate_word(line, &words, i, delim);
 		rtVal = 0;
 	}
+	printf("WDC: %d\n", wordCount);
 	exe_cmd(words);
 	freeWords(&words, wordCount);
+	if (_strcmp(line, "exit") == 0)
+	{
+		free(line);
+		exit(EXIT_SUCCESS);
+	}
 	free(line);
 	return (rtVal);
 }
@@ -125,7 +138,6 @@ int prompt(void)
  * seperate_word - Function that seperates the words
  * in a string into a NULL terminated array of words
  * @line: The line of string to be operated
- * @line_copy: Stored the duplicate of line for tokenization
  * @words: Array to store the words
  * @line_size: size of the line string
  * @delim: Delimiter to be used for tokenization
@@ -134,14 +146,13 @@ int prompt(void)
 int seperate_word(char *line,
 char ***words, int line_size, char *delim)
 {
-	int i;
+	int i, RtVal = -1;
 	int wordCount = 0;
 	char *token = NULL;
 
 
 	if (line != NULL && _strcmp(line, "") != 0 && _strcmp(line, " ") != 0)
 	{
-		printf("%d\n", line_size);
 		wordCount = 1;
 		for (i = 0; i < line_size; i++)
 		{
@@ -154,16 +165,17 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = get_path(_strtok(line, delim));
+			printf("line: \"%s\"\n", line);
+			token = get_path(strtok(line, delim), &RtVal);
 
 			i = 0;
 			while (token != NULL)
 			{
-				printf("\"%s\"\n", token);
+				printf("token:\"%s\"\n", token);
 				(*words)[i] = _strdup(token);
-				if (i < 1)
+				if (RtVal != 0 && i < 1)
 					free(token);
-				token = _strtok(NULL, delim);
+				token = strtok(NULL, delim);
 				i++;
 			}
 			(*words)[i] = NULL;
