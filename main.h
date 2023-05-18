@@ -1,6 +1,7 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
+extern char **environ; /* Environment variables */
 /* Required headers */
 
 #include <stddef.h>

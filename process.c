@@ -16,7 +16,7 @@ int exe_cmd(char **argv)
 		wait(NULL);
 	} else
 	{
-		int val = execve(argv[0], argv, NULL);
+		int val = execve(argv[0], argv, environ);
 
 		if (val == -1)
 			perror("./hsh");
@@ -107,14 +107,22 @@ int prompt(void)
 	char **words = NULL;
 	int wordCount = 0, rtVal = -1, i = 0;
 
-	output("($) ");
+	if (isatty(STDIN_FILENO))
+	{
+		output("($) ");
+		/* printf("Input is from terminal.\n"); */
+	}
 	status_var = getline(&line, &line_size, stdin);
-
 	while (line[i] != '\n')
 		i++;
 
 	line[i] = '\0';
 
+	if (_strcmp(line, "exit") == 0)
+	{
+		free(line);
+		exit(EXIT_SUCCESS);
+	}
 	/* Test that input was successful and exit if not */
 	if (status_var > 0)
 	{
@@ -122,14 +130,8 @@ int prompt(void)
 		wordCount = seperate_word(line, &words, i, delim);
 		rtVal = 0;
 	}
-	printf("WDC: %d\n", wordCount);
 	exe_cmd(words);
 	freeWords(&words, wordCount);
-	if (_strcmp(line, "exit") == 0)
-	{
-		free(line);
-		exit(EXIT_SUCCESS);
-	}
 	free(line);
 	return (rtVal);
 }
@@ -165,13 +167,11 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			printf("line: \"%s\"\n", line);
 			token = get_path(strtok(line, delim), &RtVal);
 
 			i = 0;
 			while (token != NULL)
 			{
-				printf("token:\"%s\"\n", token);
 				(*words)[i] = _strdup(token);
 				if (RtVal != 0 && i < 1)
 					free(token);
