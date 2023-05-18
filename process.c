@@ -98,7 +98,7 @@ char *get_path(char *cmd, int *rt)
  * prompt -  function that prompts the user for input
  * Return: 0 on success and -1 on failure
 */
-int prompt(int argc, char **argv)
+int prompt(void)
 {
 	char *line = NULL;
 	size_t line_size;
@@ -107,12 +107,11 @@ int prompt(int argc, char **argv)
 	char **words = NULL;
 	int wordCount = 0, rtVal = -1, i = 0;
 
-	if (isatty(STDIN_FILENO)) {
-        output("($) ");
+	if (isatty(STDIN_FILENO))
+	{
+		output("($) ");
 		/* printf("Input is from terminal.\n"); */
-    }/*  else {
-        printf("Input is piped.\n");
-    } */
+	}
 	status_var = getline(&line, &line_size, stdin);
 	while (line[i] != '\n')
 		i++;
