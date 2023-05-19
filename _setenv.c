@@ -4,31 +4,33 @@ int _setenv(const char *name, const char *value, int overwrite)
 {
 	char *env, *token, *tmp;
 	int count = 0, i = 0, j = 0;
-	int size = strlen(name) + strlen(value) + 2;
+	int size = _strlen(name) + _strlen(value) + 2;
 
 	tmp = malloc(sizeof(char) * size);
 	if (!tmp)
 	{
 		return (-1);
 	}
-	strcpy(tmp, name);
-	strcat(tmp, "=");
-	strcat(tmp, value);
+	_strcpy(tmp, name);
+	_strcat(tmp, "=");
+	_strcat(tmp, value);
 
 	while (environ[count])
 	{
-		env = strdup(environ[count]);
+		env = _strdup(environ[count]);
 
 		token = strtok(env, "=");
-		if (strcmp(token, name) == 0 && overwrite != 0)
+		if (_strcmp(token, name) == 0 && overwrite != 0)
 		{
-			environ[count] = strdup(tmp);
+			environ[count] = _strdup(tmp);
+			add_node(name);
 			free(env);
 			break;
 		}
-		if (strcmp(token, name) != 0 && environ[count + 1] == NULL)
+		if (_strcmp(token, name) != 0 && environ[count + 1] == NULL)
 		{
-			environ[count + 1] = strdup(tmp);
+			environ[count + 1] = _strdup(tmp);
+			add_node(name);
 			environ[count + 2] = NULL;
 			free(env);
 			break;
@@ -46,6 +48,7 @@ int main()
 	printf("%d\n", count);
 	count = 0;
 
+	atexit(clear_env);
 	while (environ[count])
 	{
 		printf("count: %d = %s\n", count, environ[count]);

@@ -59,7 +59,7 @@ int _strcmp(const char *s1, const char *s2)
 * @s: string to be read
 * Return: int
 */
-int _strlen(char *s)
+int _strlen(const char *s)
 {
 	int len = 0;
 

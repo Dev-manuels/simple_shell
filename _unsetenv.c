@@ -7,11 +7,12 @@ int _unsetenv(const char *name)
 
 	while (environ[count])
 	{
-		env = strdup(environ[count]);
+		env = _strdup(environ[count]);
 
 		token = strtok(env, "=");
-		if (strcmp(token, name) == 0)
+		if (_strcmp(token, name) == 0)
 		{
+			free(environ[count]);
 			while (environ[count] != NULL)
 			{
 				environ[count] = environ[count + 1];
@@ -25,17 +26,4 @@ int _unsetenv(const char *name)
 		free(env);
 	}
 	return (count);
-}
-
-int main()
-{
-	int count = _unsetenv("GROUP");
-	count = 0;
-	while (environ[count])
-	{
-		printf("%s\n", environ[count]);
-		count++;
-	}
-
-	return 0;
 }

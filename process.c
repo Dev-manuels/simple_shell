@@ -148,7 +148,7 @@ int prompt(void)
 int seperate_word(char *line,
 char ***words, int line_size, char *delim)
 {
-	int i, RtVal = -1;
+	int i;
 	int wordCount = 0;
 	char *token = NULL;
 
@@ -167,14 +167,12 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = get_path(strtok(line, delim), &RtVal);
+			token = strtok(line, delim);
 
 			i = 0;
 			while (token != NULL)
 			{
 				(*words)[i] = _strdup(token);
-				if (RtVal != 0 && i < 1)
-					free(token);
 				token = strtok(NULL, delim);
 				i++;
 			}
@@ -184,5 +182,3 @@ char ***words, int line_size, char *delim)
 	}
 	return (-1);
 }
-
-
