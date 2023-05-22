@@ -25,7 +25,7 @@ void *add_node(const char *str)
 
 /**
  * clear_env - atexit function for clearing mem-leaks
-*/
+ */
 void clear_env(void)
 {
 	free_list(head_list);
@@ -61,7 +61,7 @@ void free_list(list_t *head)
  * @value: value of the enviroment variable
  * @overwrite: indicates if to overwrite existing
  * Return: 0 on success, -1 on failure
-*/
+ */
 int _setenv(const char *name, const char *value, int overwrite)
 {
 	char *env, *token, *tmp;
@@ -108,7 +108,7 @@ int _setenv(const char *name, const char *value, int overwrite)
  * _unsetenv - Function that unsets an enviroment variable
  * @name: name of enviroment variable
  * Return: 0 on success, -1 on failure
-*/
+ */
 int _unsetenv(const char *name)
 {
 	char *env, *token;
@@ -121,12 +121,12 @@ int _unsetenv(const char *name)
 		token = strtok(env, "=");
 		if (_strcmp(token, name) == 0)
 		{
-			free(environ[count]);
 			while (environ[count] != NULL)
 			{
 				environ[count] = environ[count + 1];
 				count++;
 			}
+			free(environ[count]);
 			environ[count] = NULL;
 			free(env);
 			break;
