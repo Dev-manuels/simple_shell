@@ -1,97 +1,78 @@
 #include "main.h"
 
 /**
- * exe_cmd -  function that execute command
- * @argv: array of arguments to be passed to execve
+ * chgdir - Function that changes the directory
+ * of the calling process
+ * @path: path to change to
+*/
+void chgdir(const char *path)
+{
+	if (access(path, F_OK) == 0)
+	{
+		chdir(path);
+		_setenv("PWD", path, 1);
+	}
+}
+
+/**
+ * exe_bin - function that execute a binary program
+ * @args: arguments to be passed to the program
  * Return: 0 on sucess, -1 on failure
 */
-int exe_cmd(char **argv)
+int exe_bin(char **args)
 {
-	pid_t child = fork();
-
-	if (child == -1)
-		perror("fork failed");
-	if (child != 0)
+	if (access(args[0], X_OK | F_OK) == 0)
 	{
-		wait(NULL);
-	} else
-	{
-		int val = execve(argv[0], argv, environ);
+		pid_t child = fork();
 
-		if (val == -1)
+		if (child == -1)
 			perror("./hsh");
-		return (-1);
+		if (child != 0)
+		{
+			wait(NULL);
+		} else
+		{
+			int val = execve(args[0], args, environ);
+
+			if (val == -1)
+				perror("./hsh");
+			return (-1);
+		}
 	}
+
 	return (0);
 }
 
 /**
- * freeWords - Function that dynamicaly frees an array of strings
- * @words: array of strings to be freed
- * @wordCount: number of words in the array
- * Return: 0 on success, -1 on failure
+ * exe_cmd -  function that execute command
+ * @args: array of arguments for the command
+ * Return: 0 on sucess, -1 on failure
 */
-int freeWords(char ***words, int wordCount)
+int exe_cmd(char **args)
 {
-	int i;
+	int rtVal = 0;
 
-	if (words != NULL && wordCount > 0)
+	if (strcmp(args[0], "unsetenv") == 0)
 	{
-		for (i = 0; i <= wordCount; i++)
-		{
-			free((*words)[i]);
-		}
-		free(*words);
-		return (0);
+		unsetenv(args[1]);
 	}
-	return (-1);
-}
-
-/**
- * get_path - function that gets the path to an
- * executeable program in the bin diretory by
- * concartinating cmd to /bin/
- * @cmd: the command to be executed
- * @rt: value used to detect memory alloc
- * Return: pointer to the path on success, NULL
- * on failure
-*/
-char *get_path(char *cmd, int *rt)
-{
-	char *path = NULL;
-	char *prefix = "/bin/";
-	int i, j = 0;
-
-	if (access(cmd, X_OK | F_OK) == 0)
+	else if (strcmp(args[0], "cd") == 0)
 	{
-		*rt = 0;
-		return (cmd);
+		chgdir(args[1]);
 	}
-	if (cmd != NULL)
+	else if (strcmp(args[0], "exit") == 0)
 	{
-		int size = _strlen(cmd) + _strlen(prefix) + 1;
-
-		path = malloc(sizeof(char) * size);
-		if (path != NULL)
-		{
-			for (i = 0; i < size - 1; i++)
-			{
-				if (i < _strlen(prefix))
-				{
-					path[i] = prefix[i];
-				}
-				else
-				{
-					path[i] = cmd[j];
-					j++;
-				}
-			}
-			path[i] = '\0';
-			return (path);
-		}
+		exit_status(args[1]);
 	}
-	*rt = 1;
-	return (path);
+	else if (strcmp(args[0], "setenv") == 0)
+	{
+		_setenv(args[1], args[2], _atoi(args[3]));
+	} else
+	{
+		args[0] = get_path(args[0]);
+		rtVal = exe_bin(args);
+	}
+	return (rtVal);
 }
 
 /**
@@ -128,9 +109,8 @@ int prompt(void)
 	{
 		/* invoke the word separator function and get number of words read */
 		wordCount = seperate_word(line, &words, i, delim);
-		rtVal = 0;
 	}
-	exe_cmd(words);
+	rtVal = exe_cmd(words);
 	freeWords(&words, wordCount);
 	free(line);
 	return (rtVal);
