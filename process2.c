@@ -60,20 +60,16 @@ void free_list(list_t *head)
  * _setenv - Function that sets an enviroment variable
  * @name: name of enviroment variable
  * @value: value of the enviroment variable
- * @overwrite: indicates if to overwrite existing
  * Return: 0 on success, -1 on failure
 */
 int _setenv(const char *name, const char *value)
 {
 	char *env, *token, *tmp;
-	int count = 0, test = -1;
-	int size = _strlen(name) + _strlen(value) + 2;
+	int count = 0, test = -1, size = _strlen(name) + _strlen(value) + 2;
 
 	tmp = malloc(sizeof(char) * size);
 	if (!tmp)
 	{
-		if (test != 0)
-			write(STDERR_FILENO, "Set env failed\n", 16);
 		return (-1);
 	}
 	_strcpy(tmp, name);
@@ -83,14 +79,12 @@ int _setenv(const char *name, const char *value)
 	while (environ[count])
 	{
 		env = _strdup(environ[count]);
-
 		token = strtok(env, "=");
 		if (_strcmp(token, name) == 0)
 		{
 			environ[count] = _strdup(tmp);
 			add_node(name);
 			free(env);
-			test = 0;
 			break;
 		}
 		if (_strcmp(token, name) != 0 && environ[count + 1] == NULL)
@@ -99,7 +93,6 @@ int _setenv(const char *name, const char *value)
 			add_node(name);
 			environ[count + 2] = NULL;
 			free(env);
-			test = 0;
 			break;
 		}
 		count++;
