@@ -1,97 +1,86 @@
 #include "main.h"
 
+static char **words;
+static int wordCount;
+
 /**
- * exe_cmd -  function that execute command
- * @argv: array of arguments to be passed to execve
+ * exe_bin - function that execute a binary program
+ * @args: arguments to be passed to the program
  * Return: 0 on sucess, -1 on failure
 */
-int exe_cmd(char **argv)
+int exe_bin(char **args)
 {
-	pid_t child = fork();
-
-	if (child == -1)
-		perror("fork failed");
-	if (child != 0)
+	if (access(args[0], X_OK | F_OK) == 0)
 	{
-		wait(NULL);
-	} else
-	{
-		int val = execve(argv[0], argv, environ);
+		pid_t child = fork();
 
-		if (val == -1)
+		if (child == -1)
 			perror("./hsh");
-		return (-1);
+		if (child != 0)
+		{
+			wait(NULL);
+		} else
+		{
+			int val = execve(args[0], args, environ);
+
+			if (val == -1)
+				perror("./hsh");
+			return (-1);
+		}
 	}
+
 	return (0);
 }
 
 /**
- * freeWords - Function that dynamicaly frees an array of strings
- * @words: array of strings to be freed
- * @wordCount: number of words in the array
- * Return: 0 on success, -1 on failure
+ * exe_cmd -  function that execute command
+ * @args: array of arguments for the command
+ * Return: 0 on sucess, -1 on failure
 */
-int freeWords(char ***words, int wordCount)
+int exe_cmd(char **args)
 {
-	int i;
+	int rtVal = 0;
 
-	if (words != NULL && wordCount > 0)
+	if (strcmp(args[0], "unsetenv") == 0)
 	{
-		for (i = 0; i <= wordCount; i++)
-		{
-			free((*words)[i]);
-		}
-		free(*words);
-		return (0);
+		unsetenv(args[1]);
 	}
-	return (-1);
+	else if (strcmp(args[0], "cd") == 0)
+	{
+		chgdir(args[1]);
+	}
+	else if (strcmp(args[0], "exit") == 0)
+	{
+		exit_status(args[1]);
+	}
+	else if (strcmp(args[0], "setenv") == 0)
+	{
+		_setenv(args[1], args[2]);
+	} else
+	{
+		args[0] = get_path(args[0]);
+		rtVal = exe_bin(args);
+	}
+	return (rtVal);
 }
 
 /**
- * get_path - function that gets the path to an
- * executeable program in the bin diretory by
- * concartinating cmd to /bin/
- * @cmd: the command to be executed
- * @rt: value used to detect memory alloc
- * Return: pointer to the path on success, NULL
- * on failure
+ * exit_status - Exit function with exit status
+ * @input: exit status code/number
 */
-char *get_path(char *cmd, int *rt)
+void exit_status(const char *input)
 {
-	char *path = NULL;
-	char *prefix = "/bin/";
-	int i, j = 0;
-
-	if (access(cmd, X_OK | F_OK) == 0)
+	if (input != NULL)
 	{
-		*rt = 0;
-		return (cmd);
-	}
-	if (cmd != NULL)
-	{
-		int size = _strlen(cmd) + _strlen(prefix) + 1;
+		int status = _atoi(input);
 
-		path = malloc(sizeof(char) * size);
-		if (path != NULL)
-		{
-			for (i = 0; i < size - 1; i++)
-			{
-				if (i < _strlen(prefix))
-				{
-					path[i] = prefix[i];
-				}
-				else
-				{
-					path[i] = cmd[j];
-					j++;
-				}
-			}
-			path[i] = '\0';
-			return (path);
-		}
+		freeWords(words, wordCount);
+		exit(status);
+	} else
+	{
+		freeWords(words, wordCount);
+		exit(EXIT_SUCCESS);
 	}
-	*rt = 1;
-	return (path);
 }
 
 /**
@@ -104,8 +93,7 @@ int prompt(void)
 	size_t line_size;
 	ssize_t status_var;
 	char *delim = " \n";
-	char **words = NULL;
-	int wordCount = 0, rtVal = -1, i = 0;
+	int rtVal = -1, i = 0;
 
 	if (isatty(STDIN_FILENO))
 	{
@@ -118,21 +106,16 @@ int prompt(void)
 
 	line[i] = '\0';
 
-	if (_strcmp(line, "exit") == 0)
-	{
-		free(line);
-		exit(EXIT_SUCCESS);
-	}
+
 	/* Test that input was successful and exit if not */
 	if (status_var > 0)
 	{
 		/* invoke the word separator function and get number of words read */
 		wordCount = seperate_word(line, &words, i, delim);
-		rtVal = 0;
+		free(line);
 	}
-	exe_cmd(words);
-	freeWords(&words, wordCount);
-	free(line);
+	rtVal = exe_cmd(words);
+	freeWords(words, wordCount);
 	return (rtVal);
 }
 
@@ -148,8 +131,8 @@ int prompt(void)
 int seperate_word(char *line,
 char ***words, int line_size, char *delim)
 {
-	int i, RtVal = -1;
-	int wordCount = 0;
+	int i;
+	int wordCount = -1;
 	char *token = NULL;
 
 
@@ -167,22 +150,18 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = get_path(strtok(line, delim), &RtVal);
+			token = strtok(line, delim);
 
 			i = 0;
 			while (token != NULL)
 			{
 				(*words)[i] = _strdup(token);
-				if (RtVal != 0 && i < 1)
-					free(token);
 				token = strtok(NULL, delim);
 				i++;
 			}
 			(*words)[i] = NULL;
 		}
-		return (wordCount);
+		/* free(line); */
 	}
-	return (-1);
+	return (wordCount);
 }
-
-
