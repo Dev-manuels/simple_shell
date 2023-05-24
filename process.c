@@ -143,6 +143,8 @@ char ***words, int line_size, char *delim)
 		{
 			if (line[i] == *delim)
 			{
+				if (line[i + 1] == '#')
+					break;
 				wordCount++;
 			}
 		}
@@ -157,11 +159,15 @@ char ***words, int line_size, char *delim)
 			{
 				(*words)[i] = _strdup(token);
 				token = strtok(NULL, delim);
+				if (token != NULL)
+				{
+					if (token[0] == '#')
+						token = NULL;
+				}
 				i++;
 			}
 			(*words)[i] = NULL;
 		}
-		/* free(line); */
 	}
 	return (wordCount);
 }
