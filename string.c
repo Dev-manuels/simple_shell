@@ -73,7 +73,7 @@ int _strlen(const char *s)
 }
 
 /**
- * _strtok - Custom strtok function that
+ * _strtok - Custom _strtok function that
  * tokenizes a string
  * @str: String to be tokenized
  * @delim: Delimiter character

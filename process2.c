@@ -79,7 +79,7 @@ int _setenv(const char *name, const char *value)
 	while (environ[count])
 	{
 		env = _strdup(environ[count]);
-		token = strtok(env, "=");
+		token = _strtok(env, "=");
 		if (_strcmp(token, name) == 0)
 		{
 			environ[count] = _strdup(tmp);
@@ -119,7 +119,7 @@ int _unsetenv(const char *name)
 	{
 		env = _strdup(environ[count]);
 
-		token = strtok(env, "=");
+		token = _strtok(env, "=");
 		if (_strcmp(token, name) == 0)
 		{
 			free(environ[count]);
