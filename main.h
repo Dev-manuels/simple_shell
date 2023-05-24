@@ -42,9 +42,9 @@ int exe_bin(char **args);
 int exe_cmd(char **argv);
 void exit_status(const char *input);
 void free_list(list_t *head);
-int freeWords(char ***words, int wordCount);
+int freeWords(char **words, int wordCount);
 char *get_path(char *cmd);
-int _setenv(const char *name, const char *value, int overwrite);
+int _setenv(const char *name, const char *value);
 int seperate_word(char *line,
 char ***words, int line_size, char *delim);
 char *_strcat(char *dest, const char *src);

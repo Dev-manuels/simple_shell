@@ -1,18 +1,7 @@
 #include "main.h"
 
-/**
- * chgdir - Function that changes the directory
- * of the calling process
- * @path: path to change to
-*/
-void chgdir(const char *path)
-{
-	if (access(path, F_OK) == 0)
-	{
-		chdir(path);
-		_setenv("PWD", path, 1);
-	}
-}
+static char **words;
+static int wordCount;
 
 /**
  * exe_bin - function that execute a binary program
@@ -66,13 +55,32 @@ int exe_cmd(char **args)
 	}
 	else if (strcmp(args[0], "setenv") == 0)
 	{
-		_setenv(args[1], args[2], _atoi(args[3]));
+		_setenv(args[1], args[2]);
 	} else
 	{
 		args[0] = get_path(args[0]);
 		rtVal = exe_bin(args);
 	}
 	return (rtVal);
+}
+
+/**
+ * exit_status - Exit function with exit status
+ * @input: exit status code/number
+*/
+void exit_status(const char *input)
+{
+	if (input != NULL)
+	{
+		int status = _atoi(input);
+
+		freeWords(words, wordCount);
+		exit(status);
+	} else
+	{
+		freeWords(words, wordCount);
+		exit(EXIT_SUCCESS);
+	}
 }
 
 /**
@@ -85,8 +93,7 @@ int prompt(void)
 	size_t line_size;
 	ssize_t status_var;
 	char *delim = " \n";
-	char **words = NULL;
-	int wordCount = 0, rtVal = -1, i = 0;
+	int rtVal = -1, i = 0;
 
 	if (isatty(STDIN_FILENO))
 	{
@@ -99,20 +106,16 @@ int prompt(void)
 
 	line[i] = '\0';
 
-	if (_strcmp(line, "exit") == 0)
-	{
-		free(line);
-		exit(EXIT_SUCCESS);
-	}
+
 	/* Test that input was successful and exit if not */
 	if (status_var > 0)
 	{
 		/* invoke the word separator function and get number of words read */
 		wordCount = seperate_word(line, &words, i, delim);
+		free(line);
 	}
 	rtVal = exe_cmd(words);
-	freeWords(&words, wordCount);
-	free(line);
+	freeWords(words, wordCount);
 	return (rtVal);
 }
 
@@ -129,7 +132,7 @@ int seperate_word(char *line,
 char ***words, int line_size, char *delim)
 {
 	int i;
-	int wordCount = 0;
+	int wordCount = -1;
 	char *token = NULL;
 
 
@@ -158,7 +161,7 @@ char ***words, int line_size, char *delim)
 			}
 			(*words)[i] = NULL;
 		}
-		return (wordCount);
+		/* free(line); */
 	}
-	return (-1);
+	return (wordCount);
 }

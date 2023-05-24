@@ -28,7 +28,8 @@ void *add_node(const char *str)
  */
 void clear_env(void)
 {
-	free_list(head_list);
+	if (head_list != NULL)
+		free_list(head_list);
 }
 
 /**
@@ -61,16 +62,18 @@ void free_list(list_t *head)
  * @value: value of the enviroment variable
  * @overwrite: indicates if to overwrite existing
  * Return: 0 on success, -1 on failure
- */
-int _setenv(const char *name, const char *value, int overwrite)
+*/
+int _setenv(const char *name, const char *value)
 {
 	char *env, *token, *tmp;
-	int count = 0;
+	int count = 0, test = -1;
 	int size = _strlen(name) + _strlen(value) + 2;
 
 	tmp = malloc(sizeof(char) * size);
 	if (!tmp)
 	{
+		if (test != 0)
+			write(STDERR_FILENO, "Set env failed\n", 16);
 		return (-1);
 	}
 	_strcpy(tmp, name);
@@ -82,11 +85,12 @@ int _setenv(const char *name, const char *value, int overwrite)
 		env = _strdup(environ[count]);
 
 		token = strtok(env, "=");
-		if (_strcmp(token, name) == 0 && overwrite != 0)
+		if (_strcmp(token, name) == 0)
 		{
 			environ[count] = _strdup(tmp);
 			add_node(name);
 			free(env);
+			test = 0;
 			break;
 		}
 		if (_strcmp(token, name) != 0 && environ[count + 1] == NULL)
@@ -95,12 +99,16 @@ int _setenv(const char *name, const char *value, int overwrite)
 			add_node(name);
 			environ[count + 2] = NULL;
 			free(env);
+			test = 0;
 			break;
 		}
 		count++;
+		test = 1;
 		free(env);
 	}
 	free(tmp);
+	if (test == -1)
+		write(STDERR_FILENO, "Set env failed\n", 16);
 	return (count);
 }
 
@@ -112,7 +120,7 @@ int _setenv(const char *name, const char *value, int overwrite)
 int _unsetenv(const char *name)
 {
 	char *env, *token;
-	int count = 0;
+	int count = 0, test = -1;
 
 	while (environ[count])
 	{
@@ -121,18 +129,22 @@ int _unsetenv(const char *name)
 		token = strtok(env, "=");
 		if (_strcmp(token, name) == 0)
 		{
+			free(environ[count]);
 			while (environ[count] != NULL)
 			{
 				environ[count] = environ[count + 1];
 				count++;
 			}
-			free(environ[count]);
 			environ[count] = NULL;
 			free(env);
+			test = 0;
 			break;
 		}
 		count++;
 		free(env);
+		test = 1;
 	}
+	if (test == -1)
+		write(STDERR_FILENO, "Unsetenv failed\n", 17);
 	return (count);
 }

@@ -17,15 +17,25 @@ int main(void)
 }
 
 /**
- * exit_status - Exit function with exit status
- * @input: exit status code/number
+ * chgdir - Function that changes the directory
+ * of the calling process
+ * @path: path to change to
 */
-void exit_status(const char *input)
+void chgdir(const char *path)
 {
-	int status = _atoi(input);
-
-	exit(status);
+	if (path != NULL)
+	{
+		if (access(path, F_OK) == 0)
+		{
+			chdir(path);
+			_setenv("PWD", path);
+		}
+	} else
+	{
+		write(STDERR_FILENO, "./hsh: Change Directory Failed\n", 32);
+	}
 }
+
 
 /**
  * freeWords - Function that dynamicaly frees an array of strings
@@ -33,7 +43,7 @@ void exit_status(const char *input)
  * @wordCount: number of words in the array
  * Return: 0 on success, -1 on failure
 */
-int freeWords(char ***words, int wordCount)
+int freeWords(char **words, int wordCount)
 {
 	int i;
 
@@ -41,9 +51,9 @@ int freeWords(char ***words, int wordCount)
 	{
 		for (i = 0; i <= wordCount; i++)
 		{
-			free((*words)[i]);
+			free((words)[i]);
 		}
-		free(*words);
+		free(words);
 		return (0);
 	}
 	return (-1);
