@@ -39,12 +39,12 @@ extern char **environ;
 /* Function prototypes */
 void *add_node(const char *str, char **add);
 int _atoi(const char *s);
-void chgdir(const char *path);
+void chgdir(char *path);
 void clear_env(void);
 int exe_bin(char **args);
 int exe_cmd(char **argv);
 void exit_status(const char *input);
-void free_list(list_t *head);
+void free_list(list_t **head);
 int free_node(const char *name);
 int freeWords(char ***words, int wordCount);
 char *_getenv(const char *name);

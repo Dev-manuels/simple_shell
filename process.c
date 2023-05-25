@@ -47,11 +47,13 @@ void exit_status(const char *input)
 		int status = _atoi(input);
 
 		freeWords(&words, wordCount);
-		exit(status);
+		clear_env();
+		_exit(status);
 	} else
 	{
 		freeWords(&words, wordCount);
-		exit(EXIT_SUCCESS);
+		clear_env();
+		_exit(2);
 	}
 }
 

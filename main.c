@@ -8,7 +8,6 @@ int main(void)
 {
 	int status = 0;
 
-	atexit(clear_env);
 	while (status == 0)
 		status = prompt();
 
@@ -20,9 +19,9 @@ int main(void)
  * of the calling process
  * @path: path to change to
 */
-void chgdir(const char *path)
+void chgdir(char *path)
 {
-	char tmp[300], *newpath;
+	char tmp[300], *newpath = path;
 	int test = -1;
 
 	getcwd(tmp, 300);
@@ -31,22 +30,16 @@ void chgdir(const char *path)
 		if (_strcmp(path, "-") == 0)
 		{
 			newpath = _getenv("OLDWD");
-			if (newpath != NULL)
-			{
-				if (access(newpath, F_OK) == 0)
-				{
-					chdir(newpath);
-					_setenv("OLDWD", tmp);
-					_setenv("PWD", newpath);
-					test = 0;
-				}
-			}
-		} else if (access(path, F_OK) == 0)
+		}
+		if (newpath != NULL)
 		{
-			chdir(path);
-			_setenv("OLDWD", tmp);
-			_setenv("PWD", path);
-			test = 0;
+			if (access(newpath, F_OK) == 0)
+			{
+				chdir(newpath);
+				_setenv("OLDWD", tmp);
+				_setenv("PWD", newpath);
+				test = 0;
+			}
 		}
 	} else
 	{

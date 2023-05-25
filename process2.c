@@ -11,6 +11,7 @@ void *add_node(const char *str, char **add)
 {
 	list_t *new_node;
 
+	head_list = NULL;
 	new_node = malloc(sizeof(list_t));
 
 	if (new_node == NULL)
@@ -31,7 +32,7 @@ void *add_node(const char *str, char **add)
 void clear_env(void)
 {
 	if (head_list != NULL)
-		free_list(head_list);
+		free_list(&head_list);
 }
 
 /**
@@ -54,7 +55,6 @@ int free_node(const char *name)
 			free(tmp);
 			tmp = NULL;
 			head_list = NULL;
-			return (0);
 		} else
 		{
 			while (tmp != NULL)
@@ -64,19 +64,22 @@ int free_node(const char *name)
 				{
 					if (_strcmp(name, current->str) == 0)
 					{
-						tmp->next = current->next;
+					tmp = current->next;
+					if (current != NULL)
+					{
 						free(current->str);
 						free(current->add);
 						free(current);
-						current = NULL;
-						return (0);
+					}
+					current = NULL;
+					break;
 					}
 				}
 				tmp = tmp->next;
 			}
 		}
 	}
-	return (-1);
+	return (0);
 }
 
 /**
@@ -84,23 +87,23 @@ int free_node(const char *name)
  * @head: pointer to head element of list
  * Return: Nothing
  */
-void free_list(list_t *head)
+void free_list(list_t **head)
 {
-	if (head != NULL)
-	{
-		list_t *temp;
 
-		temp = head;
-		while (head)
-		{
-			temp = head;
-			head = head->next;
-			free(temp->add);
-			free(temp->str);
-			free(temp);
-		}
-		free(head);
+	list_t *current, *next;
+
+	if (head == NULL || *head == NULL)
+		return;
+
+	current = *head;
+	while (current != NULL)
+	{
+		next = current->next;
+		_unsetenv(current->str);
+		current = next;
 	}
+
+	*head = NULL;
 }
 
 /**
