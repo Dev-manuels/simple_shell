@@ -89,6 +89,9 @@ int prompt(void)
 		rtVal = exe_cmd(words);
 		if (words != NULL)
 			freeWords(&words, wordCount);
+	} else
+	{
+		rtVal = 0;
 	}
 	if (!isatty(STDIN_FILENO))
 		_exit(rtVal);
