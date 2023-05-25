@@ -34,27 +34,7 @@ void chgdir(const char *path)
 			_setenv("OLDWD", tmp);
 			_setenv("PWD", path);
 		}
-	}/*  else if (_strcmp(path, "-") == 0)
-	{
-		printf("----\n");
-		newpath = _getenv("OLDWD");
-		if (access(newpath, F_OK) == 0)
-		{
-			chdir(newpath);
-			_setenv("OLDWD", tmp);
-			_setenv("PWD", newpath);
-		}
-	} else
-	{
-		printf("HOME\n");
-		newpath = _getenv("HOME");
-		if (access(newpath, F_OK) == 0)
-		{
-			chdir(newpath);
-			_setenv("OLDWD", tmp);
-			_setenv("PWD", newpath);
-		}
-	} */
+	}
 }
 
 /**
