@@ -78,21 +78,20 @@ int prompt(void)
 		i++;
 
 	line[i] = '\0';
-	/* Test that input was successful and exit if not */
-	if (status_var > 0)
+	if (_strlen(line) > 1 && _strcmp(line, " ") != 0 && _strcmp(line, "  ") != 0)
 	{
-		/* invoke the word separator function and get number of words read */
-		wordCount = seperate_word(line, &words, i, delim);
-		free(line);
-		line = NULL;
+		if (status_var > 0)
+		{
+			wordCount = seperate_word(line, &words, i, delim);
+			free(line);
+			line = NULL;
+		}
+		rtVal = exe_cmd(words);
+		if (words != NULL)
+			freeWords(&words, wordCount);
 	}
-	rtVal = exe_cmd(words);
-	if (words != NULL)
-		freeWords(&words, wordCount);
 	if (!isatty(STDIN_FILENO))
-	{
 		_exit(rtVal);
-	}
 	return (rtVal);
 }
 
