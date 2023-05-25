@@ -133,13 +133,13 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = _strtok(line, delim);
+			token = _sttok(line, delim);
 
 			i = 0;
 			while (token != NULL)
 			{
 				(*words)[i] = _strdup(token);
-				token = _strtok(NULL, delim);
+				token = _sttok(NULL, delim);
 				if (token != NULL)
 				{
 					if (token[0] == '#')
@@ -168,7 +168,7 @@ int _unsetenv(const char *name)
 	{
 		env = _strdup(environ[count]);
 
-		token = _strtok(env, "=");
+		token = _sttok(env, "=");
 		if (_strcmp(token, name) == 0)
 		{
 			free_node(name);

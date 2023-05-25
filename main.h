@@ -1,8 +1,6 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
-#define _strtok st
-
 /* Structs */
 /**
  * struct list_s - singly linked list
@@ -59,7 +57,7 @@ int _strcmp(const char *s1, const char *s2);
 char *_strcpy(char *dest, const char *src);
 char *_strdup(const char *str);
 int _strlen(const char *s);
-char *_strtok(char *str, const char *delim);
+char *_sttok(char *str, const char *delim);
 int output(const char *s);
 int prompt(void);
 int _unsetenv(const char *name);

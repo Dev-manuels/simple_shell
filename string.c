@@ -73,13 +73,13 @@ int _strlen(const char *s)
 }
 
 /**
- * _strtok - Custom _strtok function that
+ * _sttok - Custom _sttok function that
  * tokenizes a string
  * @str: String to be tokenized
  * @delim: Delimiter character
  * Return: Pointer token
 */
-char *_strtok(char *str, const char *delim)
+char *_sttok(char *str, const char *delim)
 {
 	int index;
 	static char *new_str;
