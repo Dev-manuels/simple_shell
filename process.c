@@ -70,16 +70,14 @@ int prompt(void)
 	int rtVal = -1, i = 0;
 
 	if (isatty(STDIN_FILENO))
-	{
 		output("($) ");
-	}
-	status_var = getline(&line, &line_size, stdin);
-	while (line[i] != '\n')
-		i++;
 
-	line[i] = '\0';
-	if (_strlen(line) > 1 && _strcmp(line, " ") != 0 && _strcmp(line, "  ") != 0)
+	status_var = getline(&line, &line_size, stdin);
+	if (is_empty(line) != 0)
 	{
+		while (line[i] != '\n')
+			i++;
+		line[i] = '\0';
 		if (status_var > 0)
 		{
 			wordCount = seperate_word(line, &words, i, delim);
@@ -91,10 +89,14 @@ int prompt(void)
 			freeWords(&words, wordCount);
 	} else
 	{
-		rtVal = 0;
+		rtVal = -1;
 	}
-	if (!isatty(STDIN_FILENO))
-		_exit(rtVal);
+	if (!isatty(STDIN_FILENO) || status_var < 2 || rtVal < 0)
+	{
+		if (line)
+			free(line);
+		_exit(0);
+	}
 	return (rtVal);
 }
 
@@ -115,7 +117,7 @@ char ***words, int line_size, char *delim)
 	char *token = NULL;
 
 
-	if (line != NULL && _strcmp(line, "") != 0 && _strcmp(line, " ") != 0)
+	if (line != NULL)
 	{
 		wordCount = 1;
 		for (i = 0; i < line_size; i++)

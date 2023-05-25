@@ -41,6 +41,7 @@ void *add_node(const char *str, char **add);
 int _atoi(const char *s);
 void chgdir(char *path);
 void clear_env(void);
+int is_empty(const char *str);
 int exe_bin(char **args);
 int exe_cmd(char **argv);
 void exit_status(const char *input);

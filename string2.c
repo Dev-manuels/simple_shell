@@ -40,38 +40,29 @@ int _atoi(const char *s)
 }
 
 /**
- * _getline - Custom getline function
- * @buffer: buffer to store the input
- * @bufsize: Stores the size of the buffer
- * @stream: input stream
- * Return: count of chars inputed
+* is_empty - Function that returns the length of a string
+* @str: string to be read
+* Return: 0 if empty, 1 if not
 */
-size_t _getline(char **buffer, size_t *bufsize, FILE *stream)
+int is_empty(const char *str)
 {
-	size_t count;
-	char *c;
+	int i;
 
-	c = malloc(*bufsize * sizeof(buffer));
-
-	if (c == NULL)
+	if (str)
 	{
-		return (0);
-	}
-
-	for (count = 0; c[count] != '\n'; count++)
-	{
-		c[count] = getc(stream);
-		if (count > *bufsize)
+		for (i = 0; str[i] != '\0'; i++)
 		{
-			*bufsize = count;
-			c = realloc(c, *bufsize);
+			if (!(str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r'))
+			{
+				return (1);
+			}
 		}
-		*buffer = c;
+	} else
+	{
+		return (1);
 	}
-	*buffer[count] = '\0';
-	free(c);
 
-	return (count);
+	return (0);
 }
 
 /**
