@@ -3,34 +3,6 @@
 static char **words;
 static int wordCount;
 
-/**
- * exe_bin - function that execute a binary program
- * @args: arguments to be passed to the program
- * Return: 0 on sucess, -1 on failure
-*/
-int exe_bin(char **args)
-{
-	if (access(args[0], X_OK | F_OK) == 0)
-	{
-		pid_t child = fork();
-
-		if (child == -1)
-			perror("./hsh");
-		if (child != 0)
-		{
-			wait(NULL);
-		} else
-		{
-			int val = execve(args[0], args, environ);
-
-			if (val == -1)
-				perror("./hsh");
-			return (-1);
-		}
-	}
-
-	return (0);
-}
 
 /**
  * exe_cmd -  function that execute command
@@ -41,19 +13,19 @@ int exe_cmd(char **args)
 {
 	int rtVal = 0;
 
-	if (strcmp(args[0], "unsetenv") == 0)
+	if (_strcmp(args[0], "unsetenv") == 0)
 	{
-		unsetenv(args[1]);
+		_unsetenv(args[1]);
 	}
-	else if (strcmp(args[0], "cd") == 0)
+	else if (_strcmp(args[0], "cd") == 0)
 	{
 		chgdir(args[1]);
 	}
-	else if (strcmp(args[0], "exit") == 0)
+	else if (_strcmp(args[0], "exit") == 0)
 	{
 		exit_status(args[1]);
 	}
-	else if (strcmp(args[0], "setenv") == 0)
+	else if (_strcmp(args[0], "setenv") == 0)
 	{
 		_setenv(args[1], args[2]);
 	} else
@@ -74,11 +46,13 @@ void exit_status(const char *input)
 	{
 		int status = _atoi(input);
 
-		freeWords(words, wordCount);
+		if (words != NULL)
+			freeWords(words, wordCount);
 		exit(status);
 	} else
 	{
-		freeWords(words, wordCount);
+		if (words != NULL)
+			freeWords(words, wordCount);
 		exit(EXIT_SUCCESS);
 	}
 }
@@ -105,17 +79,17 @@ int prompt(void)
 		i++;
 
 	line[i] = '\0';
-
-
 	/* Test that input was successful and exit if not */
 	if (status_var > 0)
 	{
 		/* invoke the word separator function and get number of words read */
 		wordCount = seperate_word(line, &words, i, delim);
 		free(line);
+		line = NULL;
 	}
 	rtVal = exe_cmd(words);
-	freeWords(words, wordCount);
+	if (words != NULL)
+		freeWords(words, wordCount);
 	return (rtVal);
 }
 
@@ -170,4 +144,42 @@ char ***words, int line_size, char *delim)
 		}
 	}
 	return (wordCount);
+}
+
+/**
+ * _unsetenv - Function that unsets an enviroment variable
+ * @name: name of enviroment variable
+ * Return: 0 on success, -1 on failure
+ */
+int _unsetenv(const char *name)
+{
+	char *env, *token;
+	int count = 0, test = -1;
+
+	while (environ[count])
+	{
+		env = _strdup(environ[count]);
+
+		token = _strtok(env, "=");
+		if (_strcmp(token, name) == 0)
+		{
+			free_node(name);
+			printf("got here\n");
+			while (environ[count] != NULL)
+			{
+				environ[count] = environ[count + 1];
+				count++;
+			}
+			environ[count] = NULL;
+			free(env);
+			test = 0;
+			break;
+		}
+		count++;
+		free(env);
+		test = -1;
+	}
+	if (test == -1)
+		write(STDERR_FILENO, "Unsetenv failed\n", 17);
+	return (count);
 }

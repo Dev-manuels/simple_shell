@@ -7,7 +7,7 @@
  * @str: string to be copied
  * Return: copy of the string passed.
 */
-char *_strdup(char *str)
+char *_strdup(const char *str)
 {
 	char *s;
 
@@ -115,7 +115,7 @@ char *_strtok(char *str, const char *delim)
  * Return: length of char printed on success,
  * -1 on failure
 */
-int output(char *s)
+int output(const char *s)
 {
 	int count = -1;
 

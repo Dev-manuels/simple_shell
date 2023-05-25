@@ -4,9 +4,10 @@ static list_t *head_list;
 /**
  * add_node - function that add new node at the beginning of a list
  * @str: string to be added to the list
+ * @add: address of the string variable.
  * Return: address of the new element
  */
-void *add_node(const char *str)
+void *add_node(const char *str, char *add)
 {
 	list_t *new_node;
 
@@ -17,7 +18,8 @@ void *add_node(const char *str)
 		return (NULL);
 	}
 
-	new_node->str = strdup(str);
+	new_node->str = _strdup(str);
+	new_node->add = add;
 	new_node->next = head_list;
 	head_list = new_node;
 	return (new_node);
@@ -30,6 +32,36 @@ void clear_env(void)
 {
 	if (head_list != NULL)
 		free_list(head_list);
+}
+
+/**
+ * free_node - function that deletes a node.
+ * @name: node index to be deleted.
+ * Return: 1 if it succeeded, -1 if it failed.
+*/
+int free_node(const char *name)
+{
+	list_t *current, *prev;
+
+	if (head_list != NULL)
+	{
+		prev = head_list;
+		while (prev != NULL)
+		{
+			current = prev->next;
+			if (_strcmp(name, current->str) == 0)
+			{
+				prev->next = current->next;
+				free(current->add);
+				free(current->str);
+				free(current);
+				current = NULL;
+				return (0);
+			}
+			prev = prev->next;
+		}
+	}
+	return (-1);
 }
 
 /**
@@ -48,7 +80,7 @@ void free_list(list_t *head)
 		{
 			temp = head;
 			head = head->next;
-			_unsetenv(temp->str);
+			free(temp->add);
 			free(temp->str);
 			free(temp);
 		}
@@ -69,9 +101,7 @@ int _setenv(const char *name, const char *value)
 
 	tmp = malloc(sizeof(char) * size);
 	if (!tmp)
-	{
 		return (-1);
-	}
 	_strcpy(tmp, name);
 	_strcat(tmp, "=");
 	_strcat(tmp, value);
@@ -83,14 +113,14 @@ int _setenv(const char *name, const char *value)
 		if (_strcmp(token, name) == 0)
 		{
 			environ[count] = _strdup(tmp);
-			add_node(name);
+			add_node(name, environ[count]);
 			free(env);
 			break;
 		}
 		if (_strcmp(token, name) != 0 && environ[count + 1] == NULL)
 		{
 			environ[count + 1] = _strdup(tmp);
-			add_node(name);
+			add_node(name, environ[count + 1]);
 			environ[count + 2] = NULL;
 			free(env);
 			break;
@@ -105,39 +135,3 @@ int _setenv(const char *name, const char *value)
 	return (count);
 }
 
-/**
- * _unsetenv - Function that unsets an enviroment variable
- * @name: name of enviroment variable
- * Return: 0 on success, -1 on failure
- */
-int _unsetenv(const char *name)
-{
-	char *env, *token;
-	int count = 0, test = -1;
-
-	while (environ[count])
-	{
-		env = _strdup(environ[count]);
-
-		token = _strtok(env, "=");
-		if (_strcmp(token, name) == 0)
-		{
-			free(environ[count]);
-			while (environ[count] != NULL)
-			{
-				environ[count] = environ[count + 1];
-				count++;
-			}
-			environ[count] = NULL;
-			free(env);
-			test = 0;
-			break;
-		}
-		count++;
-		free(env);
-		test = 1;
-	}
-	if (test == -1)
-		write(STDERR_FILENO, "Unsetenv failed\n", 17);
-	return (count);
-}

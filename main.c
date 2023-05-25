@@ -1,6 +1,5 @@
 #include "main.h"
 
-
 /**
  * main - main program entry
  * Return: 0 on success, -1 on failure
@@ -23,19 +22,69 @@ int main(void)
 */
 void chgdir(const char *path)
 {
+	char tmp[300];/* , *newpath; */
+
+	getcwd(tmp, 300);
+	printf("got here\n");
 	if (path != NULL)
 	{
 		if (access(path, F_OK) == 0)
 		{
 			chdir(path);
+			_setenv("OLDWD", tmp);
 			_setenv("PWD", path);
+		}
+	}/*  else if (_strcmp(path, "-") == 0)
+	{
+		printf("----\n");
+		newpath = _getenv("OLDWD");
+		if (access(newpath, F_OK) == 0)
+		{
+			chdir(newpath);
+			_setenv("OLDWD", tmp);
+			_setenv("PWD", newpath);
 		}
 	} else
 	{
-		write(STDERR_FILENO, "./hsh: Change Directory Failed\n", 32);
-	}
+		printf("HOME\n");
+		newpath = _getenv("HOME");
+		if (access(newpath, F_OK) == 0)
+		{
+			chdir(newpath);
+			_setenv("OLDWD", tmp);
+			_setenv("PWD", newpath);
+		}
+	} */
 }
 
+/**
+ * exe_bin - function that execute a binary program
+ * @args: arguments to be passed to the program
+ * Return: 0 on sucess, -1 on failure
+*/
+int exe_bin(char **args)
+{
+	if (access(args[0], X_OK | F_OK) == 0)
+	{
+		pid_t child = fork();
+
+		if (child == -1)
+			perror("./hsh");
+		if (child != 0)
+		{
+			wait(NULL);
+		} else
+		{
+			int val = execve(args[0], args, environ);
+
+			if (val == -1)
+				perror("./hsh");
+			return (-1);
+		}
+	}
+
+	return (0);
+}
 
 /**
  * freeWords - Function that dynamicaly frees an array of strings
@@ -57,4 +106,30 @@ int freeWords(char **words, int wordCount)
 		return (0);
 	}
 	return (-1);
+}
+
+/**
+ * _getenv - Function that returns an env value
+ * @name: env value to be returned
+ * Return: env value of name
+*/
+char *_getenv(const char *name)
+{
+	char *env, *delim = "=", *tmp;
+	int i = 0;
+
+	while (environ[i])
+	{
+		env = _strdup(environ[i]);
+		tmp = _strtok(env, delim);
+		if (strcmp(tmp, name) == 0)
+		{
+			tmp = _strtok(NULL, delim);
+			free(env);
+			return (tmp);
+		}
+		i++;
+		free(env);
+	}
+	return (NULL);
 }
