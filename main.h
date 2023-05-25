@@ -13,6 +13,7 @@
 typedef struct list_s
 {
 	char *str;
+	char *add;
 	struct list_s *next;
 } list_t;
 
@@ -34,7 +35,7 @@ extern char **environ;
 
 
 /* Function prototypes */
-void *add_node(const char *str);
+void *add_node(const char *str, char *add);
 int _atoi(const char *s);
 void chgdir(const char *path);
 void clear_env(void);
@@ -42,7 +43,9 @@ int exe_bin(char **args);
 int exe_cmd(char **argv);
 void exit_status(const char *input);
 void free_list(list_t *head);
+int free_node(const char *name);
 int freeWords(char **words, int wordCount);
+char *_getenv(const char *name);
 char *get_path(char *cmd);
 int _setenv(const char *name, const char *value);
 int seperate_word(char *line,
@@ -50,10 +53,10 @@ char ***words, int line_size, char *delim);
 char *_strcat(char *dest, const char *src);
 int _strcmp(const char *s1, const char *s2);
 char *_strcpy(char *dest, const char *src);
-char *_strdup(char *str);
+char *_strdup(const char *str);
 int _strlen(const char *s);
 char *_strtok(char *str, const char *delim);
-int output(char *s);
+int output(const char *s);
 int prompt(void);
 int _unsetenv(const char *name);
 
