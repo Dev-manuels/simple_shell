@@ -46,13 +46,11 @@ void exit_status(const char *input)
 	{
 		int status = _atoi(input);
 
-		if (words != NULL)
-			freeWords(words, wordCount);
+		freeWords(&words, wordCount);
 		exit(status);
 	} else
 	{
-		if (words != NULL)
-			freeWords(words, wordCount);
+		freeWords(&words, wordCount);
 		exit(EXIT_SUCCESS);
 	}
 }
@@ -72,7 +70,6 @@ int prompt(void)
 	if (isatty(STDIN_FILENO))
 	{
 		output("($) ");
-		/* printf("Input is from terminal.\n"); */
 	}
 	status_var = getline(&line, &line_size, stdin);
 	while (line[i] != '\n')
@@ -89,7 +86,11 @@ int prompt(void)
 	}
 	rtVal = exe_cmd(words);
 	if (words != NULL)
-		freeWords(words, wordCount);
+		freeWords(&words, wordCount);
+	if (!isatty(STDIN_FILENO))
+	{
+		_exit(rtVal);
+	}
 	return (rtVal);
 }
 
@@ -140,6 +141,7 @@ char ***words, int line_size, char *delim)
 				}
 				i++;
 			}
+			free((*words)[i]);
 			(*words)[i] = NULL;
 		}
 	}
@@ -164,7 +166,6 @@ int _unsetenv(const char *name)
 		if (_strcmp(token, name) == 0)
 		{
 			free_node(name);
-			printf("got here\n");
 			while (environ[count] != NULL)
 			{
 				environ[count] = environ[count + 1];
