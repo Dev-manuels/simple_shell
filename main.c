@@ -134,10 +134,10 @@ char *_getenv(const char *name)
 	while (environ[i])
 	{
 		env = _strdup(environ[i]);
-		tmp = _sttok(env, delim);
+		tmp = strtok(env, delim);
 		if (_strcmp(tmp, name) == 0)
 		{
-			tmp = _sttok(NULL, delim);
+			tmp = strtok(NULL, delim);
 			free(env);
 			while ((environ[i])[j] != '=')
 			{
