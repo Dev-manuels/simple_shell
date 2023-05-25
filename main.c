@@ -22,18 +22,50 @@ int main(void)
 */
 void chgdir(const char *path)
 {
-	char tmp[300];/* , *newpath; */
+	char tmp[300], *newpath;
+	int test = -1;
 
 	getcwd(tmp, 300);
-	printf("got here\n");
 	if (path != NULL)
 	{
-		if (access(path, F_OK) == 0)
+		if (_strcmp(path, "-") == 0)
+		{
+			newpath = _getenv("OLDWD");
+			if (newpath != NULL)
+			{
+				if (access(newpath, F_OK) == 0)
+				{
+					chdir(newpath);
+					_setenv("OLDWD", tmp);
+					_setenv("PWD", newpath);
+					test = 0;
+				}
+			}
+		} else if (access(path, F_OK) == 0)
 		{
 			chdir(path);
 			_setenv("OLDWD", tmp);
 			_setenv("PWD", path);
+			test = 0;
 		}
+	} else
+	{
+		newpath = _getenv("HOME");
+		if (newpath != NULL)
+		{
+			if (access(newpath, F_OK) == 0)
+			{
+				chdir(newpath);
+				_setenv("OLDWD", tmp);
+				_setenv("PWD", newpath);
+				test = 0;
+			}
+		}
+	}
+	if (test == -1)
+	{
+		errno = ENOENT;
+		perror("./hsh");
 	}
 }
 
@@ -62,7 +94,6 @@ int exe_bin(char **args)
 			return (-1);
 		}
 	}
-
 	return (0);
 }
 
@@ -72,17 +103,26 @@ int exe_bin(char **args)
  * @wordCount: number of words in the array
  * Return: 0 on success, -1 on failure
 */
-int freeWords(char **words, int wordCount)
+int freeWords(char ***words, int wordCount)
 {
 	int i;
 
-	if (words != NULL && wordCount > 0)
+	if (*words != NULL && wordCount > 0)
 	{
-		for (i = 0; i <= wordCount; i++)
+		for (i = 0; i < wordCount; i++)
 		{
-			free((words)[i]);
+			if ((*words)[i] != NULL)
+			{
+				free((*words)[i]);
+				(*words)[i] = NULL;
+			}
 		}
-		free(words);
+		if (*words != NULL)
+		{
+			free(*words);
+			*words = NULL;
+		}
+		wordCount = 0;
 		return (0);
 	}
 	return (-1);
@@ -96,16 +136,22 @@ int freeWords(char **words, int wordCount)
 char *_getenv(const char *name)
 {
 	char *env, *delim = "=", *tmp;
-	int i = 0;
+	int i = 0, j = 0;
 
 	while (environ[i])
 	{
 		env = _strdup(environ[i]);
 		tmp = _strtok(env, delim);
-		if (strcmp(tmp, name) == 0)
+		if (_strcmp(tmp, name) == 0)
 		{
 			tmp = _strtok(NULL, delim);
 			free(env);
+			while ((environ[i])[j] != '=')
+			{
+				j++;
+			}
+			j++;
+			tmp = &(environ[i])[j];
 			return (tmp);
 		}
 		i++;

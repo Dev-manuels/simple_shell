@@ -6,6 +6,7 @@
 /**
  * struct list_s - singly linked list
  * @str: string - (malloc'ed string)
+ * @add: address of variable
  * @next: points to the next node
  *
  * Description: singly linked list node structure
@@ -23,6 +24,7 @@ extern char **environ;
 
 
 /* External Header Files */
+#include <errno.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -35,7 +37,7 @@ extern char **environ;
 
 
 /* Function prototypes */
-void *add_node(const char *str, char *add);
+void *add_node(const char *str, char **add);
 int _atoi(const char *s);
 void chgdir(const char *path);
 void clear_env(void);
@@ -44,7 +46,7 @@ int exe_cmd(char **argv);
 void exit_status(const char *input);
 void free_list(list_t *head);
 int free_node(const char *name);
-int freeWords(char **words, int wordCount);
+int freeWords(char ***words, int wordCount);
 char *_getenv(const char *name);
 char *get_path(char *cmd);
 int _setenv(const char *name, const char *value);
