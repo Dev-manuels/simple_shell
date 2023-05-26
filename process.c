@@ -15,11 +15,11 @@ int exe_cmd(char **args)
 
 	if (_strcmp(args[0], "unsetenv") == 0)
 	{
-		_unsetenv(args[1]);
+		/* _unsetenv(args[1]); */
 	}
 	else if (_strcmp(args[0], "cd") == 0)
 	{
-		chgdir(args[1]);
+		/* chgdir(args[1]); */
 	}
 	else if (_strcmp(args[0], "exit") == 0)
 	{
@@ -27,7 +27,7 @@ int exe_cmd(char **args)
 	}
 	else if (_strcmp(args[0], "setenv") == 0)
 	{
-		_setenv(args[1], args[2]);
+		/* _setenv(args[1], args[2]); */
 	} else
 	{
 		args[0] = get_path(args[0]);
@@ -93,8 +93,6 @@ int prompt(void)
 	}
 	if (!isatty(STDIN_FILENO) || status_var < 2 || rtVal < 0)
 	{
-		if (line)
-			free(line);
 		exit(0);
 	}
 	return (rtVal);
