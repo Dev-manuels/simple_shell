@@ -48,12 +48,12 @@ void exit_status(const char *input)
 
 		freeWords(&words, wordCount);
 		/* clear_env(); */
-		_exit(status);
+		exit(status);
 	} else
 	{
 		freeWords(&words, wordCount);
 		/* clear_env(); */
-		_exit(2);
+		exit(2);
 	}
 }
 
@@ -95,7 +95,7 @@ int prompt(void)
 	{
 		if (line)
 			free(line);
-		_exit(0);
+		exit(0);
 	}
 	return (rtVal);
 }
