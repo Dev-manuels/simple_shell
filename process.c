@@ -131,13 +131,13 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = _sttok(line, delim);
+			token = strtok(line, delim);
 
 			i = 0;
 			while (token != NULL)
 			{
 				(*words)[i] = _strdup(token);
-				token = _sttok(NULL, delim);
+				token = strtok(NULL, delim);
 				if (token != NULL)
 				{
 					if (token[0] == '#')
