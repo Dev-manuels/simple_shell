@@ -98,6 +98,8 @@ int main(void)
 		write(STDIN_FILENO, "\n", 2);
 		exit(0);
 	}
+	if (line)
+		free(line);
 	return (rtVal);
 }
 
@@ -137,7 +139,6 @@ char ***words, char *delim)
 				}
 				i++;
 			}
-			free((*words)[i]);
 			(*words)[i] = NULL;
 		}
 	}
