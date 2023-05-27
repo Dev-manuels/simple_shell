@@ -7,11 +7,10 @@ static list_t *head_list;
  * @add: address of the string variable.
  * Return: address of the new element
  */
-void *add_node(const char *str, char **add)
+void *add_node(const char *str, char *add)
 {
 	list_t *new_node;
 
-	head_list = NULL;
 	new_node = malloc(sizeof(list_t));
 
 	if (new_node == NULL)
@@ -20,7 +19,7 @@ void *add_node(const char *str, char **add)
 	}
 
 	new_node->str = _strdup(str);
-	new_node->add = *add;
+	new_node->add = add;
 	new_node->next = head_list;
 	head_list = new_node;
 	return (new_node);
@@ -32,7 +31,7 @@ void *add_node(const char *str, char **add)
 void clear_env(void)
 {
 	if (head_list != NULL)
-		free_list(&head_list);
+		free_list(head_list);
 }
 
 /**
@@ -42,44 +41,27 @@ void clear_env(void)
 */
 int free_node(const char *name)
 {
-	list_t *current, *tmp;
+	list_t *current, *prev;
 
-	if (head_list != NULL && name != NULL)
+	if (head_list != NULL)
 	{
-		tmp = head_list;
-		if (_strcmp(name, tmp->str) == 0)
+		prev = head_list;
+		while (prev != NULL)
 		{
-			tmp->next = tmp->next;
-			free(tmp->str);
-			free(tmp->add);
-			free(tmp);
-			tmp = NULL;
-			head_list = NULL;
-		} else
-		{
-			while (tmp != NULL)
+			current = prev->next;
+			if (_strcmp(name, current->str) == 0)
 			{
-				current = tmp->next;
-				if (current != NULL)
-				{
-					if (_strcmp(name, current->str) == 0)
-					{
-					tmp = current->next;
-					if (current != NULL)
-					{
-						free(current->str);
-						free(current->add);
-						free(current);
-					}
-					current = NULL;
-					break;
-					}
-				}
-				tmp = tmp->next;
+				prev->next = current->next;
+				free(current->add);
+				free(current->str);
+				free(current);
+				current = NULL;
+				return (0);
 			}
+			prev = prev->next;
 		}
 	}
-	return (0);
+	return (-1);
 }
 
 /**
@@ -87,23 +69,23 @@ int free_node(const char *name)
  * @head: pointer to head element of list
  * Return: Nothing
  */
-void free_list(list_t **head)
+void free_list(list_t *head)
 {
-
-	list_t *current, *next;
-
-	if (head == NULL || *head == NULL)
-		return;
-
-	current = *head;
-	while (current != NULL)
+	if (head != NULL)
 	{
-		next = current->next;
-		_unsetenv(current->str);
-		current = next;
-	}
+		list_t *temp;
 
-	*head = NULL;
+		temp = head;
+		while (head)
+		{
+			temp = head;
+			head = head->next;
+			free(temp->add);
+			free(temp->str);
+			free(temp);
+		}
+		free(head);
+	}
 }
 
 /**
@@ -131,14 +113,14 @@ int _setenv(const char *name, const char *value)
 		if (_strcmp(token, name) == 0)
 		{
 			environ[count] = _strdup(tmp);
-			add_node(name, &(environ[count + 1]));
+			add_node(name, environ[count]);
 			free(env);
 			break;
 		}
 		if (_strcmp(token, name) != 0 && environ[count + 1] == NULL)
 		{
 			environ[count + 1] = _strdup(tmp);
-			add_node(name, &(environ[count + 1]));
+			add_node(name, environ[count + 1]);
 			environ[count + 2] = NULL;
 			free(env);
 			break;
@@ -152,4 +134,3 @@ int _setenv(const char *name, const char *value)
 		write(STDERR_FILENO, "Set env failed\n", 16);
 	return (count);
 }
-

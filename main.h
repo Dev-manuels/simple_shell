@@ -36,7 +36,7 @@ extern char **environ;
 
 
 /* Function prototypes */
-void *add_node(const char *str, char **add);
+void *add_node(const char *str, char *add);
 int _atoi(const char *s);
 unsigned int check_delim(char s, const char *st);
 void chgdir(char *path);
@@ -46,7 +46,7 @@ int is_empty(const char *str);
 int exe_bin(char **args);
 int exe_cmd(char **argv);
 void exit_status(const char *input);
-void free_list(list_t **head);
+void free_list(list_t *head);
 int free_node(const char *name);
 int freeWords(char ***words, int wordCount);
 char *_getenv(const char *name);

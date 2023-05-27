@@ -46,13 +46,15 @@ void exit_status(const char *input)
 	{
 		int status = _atoi(input);
 
-		freeWords(&words, wordCount);
 		clear_env();
+		if (words != NULL)
+			freeWords(&words, wordCount);
 		exit(status);
 	} else
 	{
-		freeWords(&words, wordCount);
 		clear_env();
+		if (words != NULL)
+			freeWords(&words, wordCount);
 		exit(2);
 	}
 }
