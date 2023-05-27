@@ -80,8 +80,7 @@ int main(void)
 			seperate_word(line, &words, delim);
 			free(line);
 			line = NULL;
-			rtVal = 0;
-			exe_cmd(words);
+			rtVal = exe_cmd(words);
 			if (words != NULL)
 				freeWords(&words, wordCount);
 		} else if (line != NULL && is_empty(line))
