@@ -26,7 +26,6 @@ unsigned int check_delim(char s, const char *st)
 void chgdir(char *path)
 {
 	char tmp[300], *newpath = path;
-	int test = -1;
 
 	getcwd(tmp, 300);
 	if (path != NULL)
@@ -42,7 +41,6 @@ void chgdir(char *path)
 				chdir(newpath);
 				_setenv("OLDWD", tmp);
 				_setenv("PWD", newpath);
-				test = 0;
 			}
 		}
 	} else
@@ -55,15 +53,9 @@ void chgdir(char *path)
 				chdir(newpath);
 				_setenv("OLDWD", tmp);
 				_setenv("PWD", newpath);
-				test = 0;
 			}
 		}
-	}
-	if (test == -1)
-	{
-		errno = ENOENT;
-		perror("./hsh");
-	}
+	}	
 }
 
 /**
@@ -92,7 +84,9 @@ int exe_bin(char **args)
 		}
 	} else
 	{
-		return (0);
+		errno = ENOENT;
+		perror("./hsh");
+		return (2);
 	}
 	return (0);
 }
