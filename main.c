@@ -94,6 +94,7 @@ int exe_bin(char **args)
 	{
 		errno = ENOENT;
 		perror("./hsh");
+		return (2);
 	}
 	return (0);
 }
