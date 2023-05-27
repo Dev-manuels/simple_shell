@@ -1,16 +1,20 @@
 #include "main.h"
 
 /**
- * main - main program entry
- * Return: 0 on success, -1 on failure
-*/
-int main(void)
+ * check_delim - function that validate delim string
+ * @s: pointer to character to check
+ * @st: pointer to thr string of delim
+ * Return: 1 on success, 0 on failure
+ */
+unsigned int check_delim(char s, const char *st)
 {
-	int status = 0;
+	unsigned int a;
 
-	while (status == 0)
-		status = prompt();
-
+	for (a = 0; st[a] != '\0'; a++)
+	{
+		if (s == st[a])
+			return (1);
+	}
 	return (0);
 }
 
@@ -138,10 +142,10 @@ char *_getenv(const char *name)
 	while (environ[i])
 	{
 		env = _strdup(environ[i]);
-		tmp = _sttok(env, delim);
+		tmp = _strtok(env, delim);
 		if (_strcmp(tmp, name) == 0)
 		{
-			tmp = _sttok(NULL, delim);
+			tmp = _strtok(NULL, delim);
 			free(env);
 			while ((environ[i])[j] != '=')
 			{

@@ -15,11 +15,11 @@ int exe_cmd(char **args)
 
 	if (_strcmp(args[0], "unsetenv") == 0)
 	{
-		/* _unsetenv(args[1]); */
+		_unsetenv(args[1]);
 	}
 	else if (_strcmp(args[0], "cd") == 0)
 	{
-		/* chgdir(args[1]); */
+		chgdir(args[1]);
 	}
 	else if (_strcmp(args[0], "exit") == 0)
 	{
@@ -27,7 +27,7 @@ int exe_cmd(char **args)
 	}
 	else if (_strcmp(args[0], "setenv") == 0)
 	{
-		/* _setenv(args[1], args[2]); */
+		_setenv(args[1], args[2]);
 	} else
 	{
 		args[0] = get_path(args[0]);
@@ -58,41 +58,42 @@ void exit_status(const char *input)
 }
 
 /**
- * prompt -  function that prompts the user for input
+ * main -  function that prompts the user for input
  * Return: 0 on success and -1 on failure
 */
-int prompt(void)
+int main(void)
 {
-	char *line = NULL;
-	size_t line_size;
-	ssize_t status_var;
-	char *delim = " \n";
-	int rtVal = -1, i = 0;
+	char *line = NULL, *delim = " \n";
+	size_t line_size = 0;
+	int rtVal = -1, i = 0, getstatus = -1;
+	int test = isatty(STDIN_FILENO);
 
-	if (isatty(STDIN_FILENO))
+	if (test == 1)
 		output("($) ");
-
-	status_var = getline(&line, &line_size, stdin);
-	if (is_empty(line) != 0)
+	while (getline(&line, &line_size, stdin) != -1)
 	{
-		while (line[i] != '\n')
-			i++;
-		line[i] = '\0';
-		if (status_var > 0)
+		getstatus = 0;
+		if (is_empty(line) != 0)
 		{
 			wordCount = seperate_word(line, &words, i, delim);
 			free(line);
 			line = NULL;
+			rtVal = 0;
+			exe_cmd(words);
+			if (words != NULL)
+				freeWords(&words, wordCount);
+		} else if (line != NULL && is_empty(line))
+		{
+			output("\n");
+			free(line);
 		}
-		rtVal = exe_cmd(words);
-		if (words != NULL)
-			freeWords(&words, wordCount);
-	} else
-	{
-		rtVal = -1;
+		if (test == 1)
+			output("($) ");
+		getstatus = -1;
 	}
-	if (!isatty(STDIN_FILENO) || status_var < 2 || rtVal < 0)
+	if (getstatus == -1)
 	{
+		write(STDIN_FILENO, "\n", 2);
 		exit(0);
 	}
 	return (rtVal);
@@ -131,13 +132,13 @@ char ***words, int line_size, char *delim)
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)
 		{
-			token = strtok(line, delim);
+			token = _strtok(line, delim);
 
 			i = 0;
 			while (token != NULL)
 			{
 				(*words)[i] = _strdup(token);
-				token = strtok(NULL, delim);
+				token = _strtok(NULL, delim);
 				if (token != NULL)
 				{
 					if (token[0] == '#')
@@ -166,7 +167,7 @@ int _unsetenv(const char *name)
 	{
 		env = _strdup(environ[count]);
 
-		token = _sttok(env, "=");
+		token = _strtok(env, "=");
 		if (_strcmp(token, name) == 0)
 		{
 			free_node(name);

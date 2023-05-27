@@ -38,6 +38,7 @@ extern char **environ;
 /* Function prototypes */
 void *add_node(const char *str, char **add);
 int _atoi(const char *s);
+unsigned int check_delim(char s, const char *st);
 void chgdir(char *path);
 void clear_env(void);
 int is_empty(const char *str);
@@ -57,7 +58,7 @@ int _strcmp(const char *s1, const char *s2);
 char *_strcpy(char *dest, const char *src);
 char *_strdup(const char *str);
 int _strlen(const char *s);
-char *_sttok(char *str, const char *delim);
+char *_strtok(char *str, const char *delim);
 int output(const char *s);
 int prompt(void);
 int _unsetenv(const char *name);
