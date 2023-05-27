@@ -93,13 +93,13 @@ int main(void)
 			output("($) ");
 		getstatus = -1;
 	}
+	if (line)
+		free(line);
 	if (getstatus == -1)
 	{
 		write(STDIN_FILENO, "\n", 2);
 		exit(0);
 	}
-	if (line)
-		free(line);
 	return (rtVal);
 }
 
