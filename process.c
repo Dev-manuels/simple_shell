@@ -13,7 +13,7 @@ int exe_cmd(char **args)
 {
 	int rtVal = 0;
 
-	if (_strcmp(args[0], "unsetenv") == 0)
+	if (_strcmp(args[0], "unsetenv") == 0 && args[1] != NULL)
 	{
 		rtVal = _unsetenv(args[1]);
 	}
@@ -25,7 +25,8 @@ int exe_cmd(char **args)
 	{
 		exit_status(args[1]);
 	}
-	else if (_strcmp(args[0], "setenv") == 0)
+	else if (_strcmp(args[0], "setenv") == 0 && args[1] != NULL
+	&& args[2] != NULL)
 	{
 		rtVal = _setenv(args[1], args[2]);
 	} else
