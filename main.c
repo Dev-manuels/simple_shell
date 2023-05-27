@@ -27,7 +27,7 @@ void chgdir(char *path)
 {
 	char tmp[600], *newpath = path;
 
-	getcwd(tmp, 300);
+	getcwd(tmp, 600);
 	if (path != NULL)
 	{
 		if (_strcmp(path, "-") == 0)
