@@ -104,7 +104,6 @@ int main(void)
  * in a string into a NULL terminated array of words
  * @line: The line of string to be operated
  * @words: Array to store the words
- * @line_size: size of the line string
  * @delim: Delimiter to be used for tokenization
  * Return: On success number of words tokenized, -1 on failure
 */
