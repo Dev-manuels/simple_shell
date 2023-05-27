@@ -92,9 +92,7 @@ int exe_bin(char **args)
 		}
 	} else
 	{
-		errno = ENOENT;
-		perror("./hsh");
-		return (2);
+		return (0);
 	}
 	return (0);
 }
