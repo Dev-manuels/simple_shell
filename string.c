@@ -73,40 +73,50 @@ int _strlen(const char *s)
 }
 
 /**
- * _sttok - Custom _sttok function that
+ * _strtok - Custom _strtok function that
  * tokenizes a string
  * @str: String to be tokenized
  * @delim: Delimiter character
  * Return: Pointer token
 */
-char *_sttok(char *str, const char *delim)
+char *_strtok(char *str, const char *delim)
 {
-	int index;
-	static char *new_str;
+	static char *t, *s;
+	unsigned int a;
 
-	if (new_str == NULL && str == NULL)
+	if (str != NULL)
+		s = str;
+	t = s;
+	if (t == NULL)
 		return (NULL);
-
-	if (str == NULL)
-		str = new_str;
-
-	for (index = 0; str[index] != '\0'; index++)
+	for (a = 0; t[a] != '\0'; a++)
 	{
-		if (str[index] == *delim)
-		{
-			while (str[index + 1] == *delim)
-				index++;
-
-			str[index] = '\0';
-			new_str = &str[index + 1];
+		if (check_delim(t[a], delim) == 0)
 			break;
-		}
 	}
+	if (s[a] == '\0' || s[a] == '#')
+	{
+		s = NULL;
+		return (NULL);
+	}
+	t = s + a;
+	s = t;
+	for (a = 0; s[a] != '\0'; a++)
+	{
+		if (check_delim(s[a], delim) == 1)
+			break;
+	}
+	if (s[a] == '\0')
+		s = NULL;
+	else
+	{
+		s[a] = '\0';
+		s = s + a + 1;
 
-	if (str[index + 1] == '\0')
-		new_str = NULL;
-
-	return (str);
+		if (*s == '\0')
+			s = NULL;
+	}
+	return (t);
 }
 
 /**
