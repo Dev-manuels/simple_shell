@@ -103,6 +103,7 @@ char *get_path(char *cmd)
 				}
 			}
 			free(cmd);
+			cmd = NULL;
 			path[i] = '\0';
 			return (path);
 		}

@@ -110,7 +110,7 @@ int freeWords(char ***words, int wordCount)
 
 	if (*words != NULL && wordCount > 0)
 	{
-		for (i = 0; i < wordCount; i++)
+		for (i = 0; i <= wordCount; i++)
 		{
 			if ((*words)[i] != NULL)
 			{

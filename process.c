@@ -47,12 +47,12 @@ void exit_status(const char *input)
 		int status = _atoi(input);
 
 		freeWords(&words, wordCount);
-		/* clear_env(); */
+		clear_env();
 		exit(status);
 	} else
 	{
 		freeWords(&words, wordCount);
-		/* clear_env(); */
+		clear_env();
 		exit(2);
 	}
 }
@@ -65,7 +65,7 @@ int main(void)
 {
 	char *line = NULL, *delim = " \n";
 	size_t line_size = 0;
-	int rtVal = -1, i = 0, getstatus = -1;
+	int rtVal = -1, getstatus = -1;
 	int test = isatty(STDIN_FILENO);
 
 	if (test == 1)
@@ -75,7 +75,7 @@ int main(void)
 		getstatus = 0;
 		if (is_empty(line) != 0)
 		{
-			wordCount = seperate_word(line, &words, i, delim);
+			seperate_word(line, &words, delim);
 			free(line);
 			line = NULL;
 			rtVal = 0;
@@ -109,25 +109,15 @@ int main(void)
  * Return: On success number of words tokenized, -1 on failure
 */
 int seperate_word(char *line,
-char ***words, int line_size, char *delim)
+char ***words, char *delim)
 {
-	int i;
-	int wordCount = -1;
+	int i = 0;
 	char *token = NULL;
 
 
 	if (line != NULL)
 	{
-		wordCount = 1;
-		for (i = 0; i < line_size; i++)
-		{
-			if (line[i] == *delim)
-			{
-				if (line[i + 1] == '#')
-					break;
-				wordCount++;
-			}
-		}
+		wordCount = count_words(line);
 
 		*words = (char **)malloc(sizeof(char *) * (wordCount + 1));
 		if (*words != NULL)

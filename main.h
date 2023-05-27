@@ -41,6 +41,7 @@ int _atoi(const char *s);
 unsigned int check_delim(char s, const char *st);
 void chgdir(char *path);
 void clear_env(void);
+int count_words(char *string);
 int is_empty(const char *str);
 int exe_bin(char **args);
 int exe_cmd(char **argv);
@@ -52,7 +53,7 @@ char *_getenv(const char *name);
 char *get_path(char *cmd);
 int _setenv(const char *name, const char *value);
 int seperate_word(char *line,
-char ***words, int line_size, char *delim);
+char ***words, char *delim);
 char *_strcat(char *dest, const char *src);
 int _strcmp(const char *s1, const char *s2);
 char *_strcpy(char *dest, const char *src);
