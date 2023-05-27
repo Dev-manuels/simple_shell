@@ -55,7 +55,7 @@ void exit_status(const char *input)
 		clear_env();
 		if (words != NULL)
 			freeWords(&words, wordCount);
-		exit(2);
+		exit(0);
 	}
 }
 
