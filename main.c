@@ -25,7 +25,7 @@ unsigned int check_delim(char s, const char *st)
 */
 void chgdir(char *path)
 {
-	char tmp[300], *newpath = path;
+	char tmp[600], *newpath = path;
 
 	getcwd(tmp, 300);
 	if (path != NULL)
